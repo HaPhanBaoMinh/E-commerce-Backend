@@ -9,13 +9,13 @@ create TABLE CUSTOMER (
 	id VARCHAR(10) PRIMARY KEY not null
 );
 
-SELECT * FROM customer
--- drop TABLE CUSTOMER 
-INSERT INTO customer (LASTNAME, FIRSTNAME, EMAIL, PHONE, PASSWORD, id) 
-	VALUES ('Hà Phan', 'Bảo Minh', 'haphanbaominh9674@gmail.com', '0912782832', '1292002', '001')
-	
-INSERT INTO customer (LASTNAME, FIRSTNAME, EMAIL, PHONE, PASSWORD, id) 
-	VALUES ('Hà Phan', 'Bảo Minh', 'haphanbaominh9675@gmail.com', '0912782832', '1292002', '002')
+-- category
+create table category (
+	id varchar(10) PRIMARY key,
+	name varchar(100),
+	description varchar(500),
+	image varchar
+)
 
 -- product
 create TABLE product (
@@ -29,27 +29,11 @@ create TABLE product (
 	discount_price float,
 	day_end_discount date,
 	createat DATE DEFAULT CURRENT_DATE,
-	CONSTRAINT fk_category
-      FOREIGN KEY(category_id) 
-	  REFERENCES category(id)
-)
-
-
--- category
-create table category (
-	id varchar(10) PRIMARY key,
-	name varchar(100),
-	description varchar(500)
-)
-
-insert into category (id, name, description) VALUES ('001', 'Running shoes', 'Shoes for running')
-insert into product (brand, name, description, category_id, quantity, sku, price, discount_price, day_end_discount) 
-	VALUES ('Nike', 'Nike Air 98', 'Nike shoes', '001', 50, '001', 200000, 150000, '11-11-2022')
+	images varchar[],
 	
-select * from product
-select * from category
+)
 
--- address
+--address
 create table address (
 	country varchar(50),
 	street varchar(100),
@@ -64,17 +48,13 @@ create table address (
 	  REFERENCES customer(id)
 )
 
-
-select * from address
-insert into address(id, country, street, distric, city, detail, wards)
-	values ('001', 'VN', 'Quang Trung', 'Đạ tẻh', 'Lâm Đồng', '87/5 khu phố 2D', 'Đạ tẻh')
-
 -- orders
 create table orders (
 	address_id varchar(10),
 	status varchar(20) DEFAULT 'Ordered',
 	total float,
 	customer_id varchar(10),
+	pay_method varchar(10),
 	id varchar(10) PRIMARY key,
 	createat date DEFAULT CURRENT_DATE,
 	CONSTRAINT fk_customer
@@ -85,10 +65,6 @@ create table orders (
       FOREIGN KEY(address_id) 
 	  REFERENCES address(id)
 )
-
-select * from orders
-insert into orders(address_id, total, customer_id, id)
-	values ('001', 200000, '001', '002')
 
 -- orderdetail
 create table ordersdetail (
@@ -107,10 +83,6 @@ create table ordersdetail (
 	  REFERENCES product(sku)
 )
 
-select * from ordersdetail join product on product.sku = ordersdetail.sku
-insert into ordersdetail(sku, total, order_id, id, quantity)
-	values ('001', 200000, '001', '001', 10)
-
 -- cart
 create table cart (
 	customer_id varchar(10),
@@ -126,38 +98,8 @@ create table cart (
 	  REFERENCES product(sku),
 	primary key (customer_id,sku)
 )
-
--- Trigger auto insert new cart when insert new customer
-CREATE OR REPLACE FUNCTION trg_customer() 
-   RETURNS TRIGGER 
-AS $$
-begin
-   insert into cart(customer_id) values (new.id);
-   return null;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE TRIGGER trg_Customer 
-	after insert 
-	on customer
-	FOR EACH ROW
-	EXECUTE PROCEDURE trg_customer();
-
-INSERT INTO customer (LASTNAME, FIRSTNAME, EMAIL, PHONE, PASSWORD, id) 
-	VALUES ('Hà Phan', 'Bảo Minh', 'haphanbaominh9675@gmail.com', '0912782832', '1292002', '002')
-
 	
-create table customerevaluate (
-	description varchar(500),
-	id varchar(10) PRIMARY key,
-	user_id varchar(10),
-	rate int,
-	CONSTRAINT fk_customer
-      FOREIGN KEY(user_id) 
-	  REFERENCES customer(id)
-)
-
+--admin
 create table adminAccount (
 	email varchar UNIQUE,
 	firstname varchar,
@@ -167,6 +109,7 @@ create table adminAccount (
 	id varchar PRIMARY key
 )
 
+--todolist
 create table todolist (
 	adminId varchar,
 	status varchar,
@@ -177,6 +120,7 @@ create table todolist (
 	  REFERENCES adminAccount(id)
 )
 
+--store info
 CREATE table store (
 	facebook varchar,
     youtube varchar,
@@ -198,26 +142,12 @@ CREATE table store (
 	img_2 varchar
 )
 
-select * from orders
-
-SELECT * FROM orders 
-   WHERE EXTRACT(YEAR FROM createat) = 2022 and EXTRACT(MONTH FROM createat) = 10
-   
-   SELECT * FROM orders 
-   WHERE EXTRACT(YEAR FROM createat) = 2022 and EXTRACT(MONTH FROM createat) = 10
-
-SELECT count(id), EXTRACT(MONTH FROM createat) as Month FROM orders 
-  WHERE EXTRACT(YEAR FROM createat) = 2022 group by EXTRACT(MONTH FROM createat)
-
+--vistter
 create table visitorOnline (
 	visit_at date
 )
 
-create table todolist (
-	status varchar,
-	text varchar
-)
-
+--tg delete product
 CREATE OR REPLACE FUNCTION delete_ordersdetil()
   RETURNS TRIGGER 
   LANGUAGE PLPGSQL
@@ -254,12 +184,23 @@ CREATE OR REPLACE TRIGGER tg_orderdetail
   ON product
   FOR EACH ROW
   EXECUTE PROCEDURE delete_product();
-  
+
+ALTER TABLE orders
+ADD COLUMN pay_method varchar(10);
+
+select * from cart
+select * from product
+select * from orders
 
 
-  
+drop table cart
 
- 
+
+
+select * from orders
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-const { createAdminAccountService, getAdminAccountService, deleteAdminAccountService, updateAdminAccountService } = require("../../services/adminService/accountService");
+const { createAdminAccountService, getAdminAccountService, deleteAdminAccountService, updateAdminAccountService, loginAdminAccountService } = require("../../services/adminService/accountService");
 
 const createAdminAccountController = async (req, res) => {
     try {
@@ -15,6 +15,18 @@ const createAdminAccountController = async (req, res) => {
 const getAdminAccountController = async (req, res) => {
     try {
         const result = await getAdminAccountService();
+        if (result) {
+            return res.json(result);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.json({ msg: error.detail, status: false });
+    }
+}
+
+const loginAdminAccountController = async (req, res) => {
+    try {
+        const result = await loginAdminAccountService(req.body);
         if (result) {
             return res.json(result);
         }
@@ -48,4 +60,4 @@ const updateAdminAccountController = async (req, res) => {
     }
 }
 
-module.exports = { createAdminAccountController, getAdminAccountController, deleteAdminAccountController, updateAdminAccountController }
+module.exports = { createAdminAccountController, getAdminAccountController, deleteAdminAccountController, updateAdminAccountController, loginAdminAccountController }

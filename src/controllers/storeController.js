@@ -2,6 +2,7 @@ const { getStoreService, updateStoreService } = require("../services/storeServic
 
 const readStoreController = async (req, res) => {
     try {
+
         const result = await getStoreService();
         if (result) {
             return res.json(result);

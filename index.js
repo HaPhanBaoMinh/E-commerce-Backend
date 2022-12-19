@@ -5,12 +5,20 @@ const bodyParser = require('body-parser');
 require("dotenv").config();
 const app = express();
 const path = require("path");
+const cookieParser = require('cookie-parser')
+
 
 //middleware
 app.use(cors());
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: "30mb", extended: "false" }));
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: "true" }));
 app.use(morgan("tiny"));
+app.use(cookieParser())
 
+app.get("/get-cookie", async (req, res) => {
+    console.log(req.cookies);
+    res.send(req.cookies)
+})
 //import routes
 const { productRouter } = require('./src/routes/productsRouter');
 const { categoryRouter } = require('./src/routes/categoryRouter');
@@ -48,7 +56,7 @@ const server = app.listen(process.env.PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: ["http://localhost:3000", "http://localhost:3001"],
+        origin: ["http://localhost:3000", "http://localhost:3001", 'https://e-commerce-6nf9.onrender.com'],
         Credential: true,
     },
 });

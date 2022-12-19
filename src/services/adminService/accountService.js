@@ -16,6 +16,19 @@ const createAdminAccountService = async ({ firstname, lastname, email, password,
     }
 }
 
+const loginAdminAccountService = async ({ email, password }) => {
+    try {
+        const result = await pool.query(`select firstname, lastname, password, role, email, id from adminaccount where email = $1 And password = $2`, [email, password]);
+        if (result.rowCount > 0) {
+            return { status: true, result: result.rows[0] }
+        }
+        return { status: false, result: "Wrong email or password" }
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 const getAdminAccountService = async () => {
     try {
         const result = await pool.query(`select firstname, lastname, password, role, email, id from adminaccount`);
@@ -56,5 +69,16 @@ const updateAdminAccountService = async ({ firstname, lastname, email, password,
     }
 }
 
+const checkAdminAccountService = async (email, password) => {
+    try {
+        const result = await pool.query(`select password, email from adminaccount where email = $1 and password = $2`, [email, password]);
+        if (result.rowCount > 0) {
+            return true
+        }
+    } catch (error) {
+        return false
+    }
+}
 
-module.exports = { createAdminAccountService, getAdminAccountService, deleteAdminAccountService, updateAdminAccountService }
+
+module.exports = { createAdminAccountService, getAdminAccountService, deleteAdminAccountService, updateAdminAccountService, loginAdminAccountService, checkAdminAccountService }
