@@ -1,7 +1,6 @@
 const { loginAdminAccountController } = require("../../controllers/adminControllers/adminAccountController");
 const { getMonthlyOrderAdminController, getOrdersAdminController, updateOrderAdminController, getTotalEarningAdminController } = require("../../controllers/adminControllers/ordersController");
 const { deleteOrderController } = require("../../controllers/ordersController");
-const authAdmin = require("../../middleware/authAdmin");
 
 const orderAdminRouter = require("express").Router();
 

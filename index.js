@@ -56,7 +56,7 @@ const server = app.listen(process.env.PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: ["http://localhost:3000", "http://localhost:3001", 'https://e-commerce-6nf9.onrender.com', 'https://ecommerce-admin-y963.onrender.com/'],
+        origin: ["http://localhost:3000", "http://localhost:3001", 'https://e-commerce-6nf9.onrender.com', 'https://ecommerce-admin-y963.onrender.com'],
         Credential: true,
     },
 });
